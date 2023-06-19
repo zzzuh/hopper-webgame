@@ -26,9 +26,12 @@ export class Configuration {
                 this.board[i] = lines[i + 1].split(/\s+/).filter(Boolean);
             }
             this.countFrogs();
-            // this.createNeighbors();
         } else {
-            this.board = board!; // exclamation to ensure that board will never be null
+            this.board = new Array<string[]>(this.getRow());
+            for (let i = 0; i < this.getRow(); i++) {
+                this.board[i] = [...board![i]];
+
+            }
 
             let rowDiff: number = endRow! - startRow!;
             let colDiff: number = endCol! - startCol!;
@@ -75,10 +78,20 @@ export class Configuration {
                     && this.board[(row + row - 2) / 2][(col + col + 2) / 2] === Configuration.GREEN_FROG ) { // top right
                         this.neighbors.add(new Configuration(undefined, this.board, row, col, row - 2, col + 2));
                     }
+                    if (row >= 2 && col >= 2 && this.board[row - 2][col - 2] === Configuration.VALID_SPOT
+                    && this.board[(row + row - 2) / 2][(col + col - 2) / 2] === Configuration.GREEN_FROG ) { // top left
+                        this.neighbors.add(new Configuration(undefined, this.board, row, col, row - 2, col - 2));
+                    }
+                    if ((this.getRow() - 1) - row >= 2 && (this.getCol() - 1) - col >= 2 && this.board[row + 2][col + 2] === Configuration.VALID_SPOT
+                    && this.board[(row + row + 2) / 2][(col + col + 2) / 2] === Configuration.GREEN_FROG ) { // bottom left
+                        this.neighbors.add(new Configuration(undefined, this.board, row, col, row + 2, col + 2));
+                    }
+                    if ((this.getRow() - 1) - row >= 2 && col >= 2 && this.board[row + 2][col - 2] === Configuration.VALID_SPOT
+                    && this.board[(row + row + 2) / 2][(col + col - 2) / 2] === Configuration.GREEN_FROG ) { // bottom right
+                        this.neighbors.add(new Configuration(undefined, this.board, row, col, row + 2, col - 2));
+                    }
                 }
-                
             }
-
         }
     }
 
@@ -108,12 +121,6 @@ export class Configuration {
     }
 
     public printConfig(): void {
-        console.log(this.getRow(), "printed row");
-        console.log("\n");
-        console.log(this.getCol(), "printed col");
-
-        console.log("\n");
-
-        console.log(this.board);
+        console.log(this.getBoard());
     }
 }
