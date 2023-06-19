@@ -2,10 +2,6 @@ import { Configuration } from "./Configuration";
 
 let config = new Configuration("./hoppers/hoppers-3.txt");
 
-for (let neighbor of config.getNeighbors().values()) {
-    neighbor.printConfig();
-}
-
 const solve = (configuration: Configuration): Configuration[] => {
     let predecessors = new Map<Configuration, Configuration | null>();
     let queue: Configuration[] = [];
@@ -43,6 +39,6 @@ const solve = (configuration: Configuration): Configuration[] => {
 let answer = solve(config);
 
 for (let route of answer) {
-    // route.printConfig();
-    // console.log(" ");
+    route.printConfig();
+    console.log(" ");
 }
