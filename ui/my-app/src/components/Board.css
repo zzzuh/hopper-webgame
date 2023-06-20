@@ -1,4 +1,9 @@
 #board {
-    display: grid;
-    background-color: red;
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+    height: 75px;
 }

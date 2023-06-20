@@ -1,3 +1,5 @@
+import { ConfigJson } from "./ConfigJson";
+
 export class Configuration {
     private static GREEN_FROG: string = "G";
     private static RED_FROG: string = "R";
@@ -11,18 +13,15 @@ export class Configuration {
     private neighbors = new Set<Configuration>();
     private frogCount = 0;
 
-    public constructor(fileContent?: string, board?: string[][], startRow?: number, startCol?: number, endRow?: number, endCol?: number) {
+    public constructor(fileContent?: ConfigJson, board?: string[][], startRow?: number, startCol?: number, endRow?: number, endCol?: number) {
         if (typeof fileContent !== 'undefined') {
-            const lines = fileContent.split("\n");
-            const fields = lines[0].split(" ");
-
-            Configuration.row = parseInt(fields[0]);
-            Configuration.col = parseInt(fields[1]);
+            Configuration.row = fileContent.row;
+            Configuration.col = fileContent.col;
 
             this.board = new Array<string[]>(this.getRow());
 
             for (let i = 0; i < this.getRow(); i++) {
-                this.board[i] = lines[i + 1].split(/\s+/).filter(Boolean);
+                this.board[i] = [...fileContent.matrix[i]];
             }
             this.countFrogs();
         } else {
@@ -100,6 +99,51 @@ export class Configuration {
         } else {
             return false;
         }
+    }
+
+    public isValidMove(startRow: number, startCol: number, endRow: number, endCol: number): boolean {
+        if (this.board[startRow][startCol] === Configuration.RED_FROG || this.board[startRow][startCol] === Configuration.GREEN_FROG) {
+          if (endRow - startRow === 4 && this.board[endRow][endCol] === Configuration.VALID_SPOT
+              && this.board[(endRow + startRow) / 2][(endCol + startCol) / 2] === Configuration.GREEN_FROG) { // moves down 4 places
+            return true;
+          }
+          if (endCol - startCol === -4 && this.board[endRow][endCol] === Configuration.VALID_SPOT
+              && this.board[(endRow + startRow) / 2][(endCol + startCol) / 2] === Configuration.GREEN_FROG) { // moves left 4 places
+            return true;
+          }
+          if (endCol - startCol === 4 && this.board[endRow][endCol] === Configuration.VALID_SPOT
+              && this.board[(endRow + startRow) / 2][(endCol + startCol) / 2] === Configuration.GREEN_FROG) { // moves right 4 places
+            return true;
+          }
+          if (endRow - startRow === -4 && this.board[endRow][endCol] === Configuration.VALID_SPOT
+              && this.board[(endRow + startRow) / 2][(endCol + startCol) / 2] === Configuration.GREEN_FROG) { // move up 4 places
+            return true;
+          }
+          if (endRow - startRow === -2 && endCol - startCol === 2
+              && this.board[endRow][endCol] === Configuration.VALID_SPOT
+              && this.board[(endRow + startRow) / 2][(endCol + startCol) / 2] === Configuration.GREEN_FROG) { // moves top right
+            return true;
+          }
+          if (endRow - startRow === -2 && endCol - startCol === -2 && this.board[endRow][endCol] === Configuration.VALID_SPOT
+              && this.board[(endRow + startRow) / 2][(endCol + startCol) / 2] === Configuration.GREEN_FROG) { // moves top left
+            return true;
+          }
+          if (endRow - startRow === 2 && endCol - startCol === -2
+              && this.board[endRow][endCol] === Configuration.VALID_SPOT
+              && this.board[(endRow + startRow) / 2][(endCol + startCol) / 2] === Configuration.GREEN_FROG) { // moves bottom left
+            return true;
+          }
+          if (endRow - startRow === 2 && endCol - startCol === 2
+              && this.board[endRow][endCol] === Configuration.VALID_SPOT
+              && this.board[(endRow + startRow) / 2][(endCol + startCol) / 2] === Configuration.GREEN_FROG) { // moves bottom right
+            return true;
+          }
+        }
+        return false;
+      }
+
+    public isFrog(row: number, col: number): boolean {
+        return this.board[row][col] === Configuration.GREEN_FROG || this.board[row][col] === Configuration.RED_FROG;
     }
 
     public getNeighbors(): Set<Configuration> {
