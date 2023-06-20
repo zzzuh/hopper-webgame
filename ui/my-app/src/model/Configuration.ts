@@ -7,15 +7,14 @@ export class Configuration {
     private static row: number;
     private static col: number;
 
-    private board: string[][];
+    private board!: string[][];
     private neighbors = new Set<Configuration>();
     private frogCount = 0;
 
-    public constructor(filename?: string, board?: string[][], startRow?: number, startCol?: number, endRow?: number, endCol?: number) {
-        if (typeof filename !== 'undefined') {
-            const fs = require("fs");
-            let lines = fs.readFileSync(filename, 'utf-8').split("\n");
-            let fields = lines[0].split(" ");
+    public constructor(fileContent?: string, board?: string[][], startRow?: number, startCol?: number, endRow?: number, endCol?: number) {
+        if (typeof fileContent !== 'undefined') {
+            const lines = fileContent.split("\n");
+            const fields = lines[0].split(" ");
 
             Configuration.row = parseInt(fields[0]);
             Configuration.col = parseInt(fields[1]);
