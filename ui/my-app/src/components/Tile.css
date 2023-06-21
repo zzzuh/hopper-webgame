@@ -1,0 +1,16 @@
+.tile {
+    width: 75px;
+    height: 75px;
+}
+
+.tile .frog {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 60px;
+    width: 75px;
+}
+
+.tile .frog :hover{
+    cursor: grab;
+}

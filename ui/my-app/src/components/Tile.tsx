@@ -7,16 +7,38 @@ interface Prop {
 }
 
 export default function Tile(prop: Prop) {
-    if (prop.name === "R") {
-        return <div id="tile"><img  className="frog" src="assets/images/red_frog.png" alt="red frog" data-row={`${prop.rowIndex}`} data-col={`${prop.colIndex}`}></img></div>
-    } 
-    else if (prop.name === "G") {
-        return <div id="tile"><img className="frog" src="assets/images/green_frog.png" alt="green frog" data-row={`${prop.rowIndex}`} data-col={`${prop.colIndex}`}></img></div>
+    const tile = prop.name;
+  
+    if (tile === "*") {
+      return (
+        <div
+          style={{ backgroundImage: "url(assets/images/water.png)" }}
+          data-row={prop.rowIndex}
+          data-col={prop.colIndex}
+          className="tile"
+        ></div>
+      );
+    } else {
+      if (prop.name === "G") {
+        return (
+          <div style={{ backgroundImage: "url(assets/images/lily_pad.png)" }} className="tile">
+            <div style={{ backgroundImage: "url(assets/images/green_frog.png)" }} className="frog" data-row={prop.rowIndex}
+          data-col={prop.colIndex}></div>
+          </div>
+        );
+      } else if (prop.name === "R") {
+        return (
+          <div style={{ backgroundImage: "url(assets/images/lily_pad.png)" }} className="tile">
+            <div style={{ backgroundImage: "url(assets/images/red_frog.png)" }} className="frog" data-row={prop.rowIndex}
+          data-col={prop.colIndex}></div>
+          </div>
+        );
+      } else {
+        return (
+          <div style={{ backgroundImage: "url(assets/images/lily_pad.png)" }} className="tile" data-row={prop.rowIndex}
+          data-col={prop.colIndex}></div>
+        );
+      }
     }
-    else if (prop.name === ".") {
-        return <div id="tile"><img src="assets/images/lily_pad.png" alt="lily pad" data-row={`${prop.rowIndex}`} data-col={`${prop.colIndex}`}></img></div>
-    }
-    else {
-        return <div id="tile"><img src="assets/images/water.png" alt="water" data-row={`${prop.rowIndex}`} data-col={`${prop.colIndex}`}></img></div>
-    }
-}
+  }
+  

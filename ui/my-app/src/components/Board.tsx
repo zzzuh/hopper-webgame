@@ -11,39 +11,81 @@ const config: ConfigJson = {
     matrix: [["R", "*", "G", "*", "."], ["*", "G", "*", "G", "*"], [".", "*", ".", "*", "."]]
 } // testing purposes
 
+const currModel = new HopperModel(config);
+
 export default function Board() {
 
-    const currModel = new HopperModel(config);
-    const [currBoard, setCurrBoard] = useState(currModel.getCurrConfig().getBoard());
+    const [currBoard, setCurrBoard] = useState(currModel.getBoard());
 
-    function selectPiece(e: React.MouseEvent) {
+    let grabbedFrog: HTMLElement | null = null;
+
+    function grabFrog(e: React.MouseEvent) {
         const element = e.target as HTMLElement;
-        const row = parseInt(element.getAttribute("data-row") as string);
-        const col = parseInt(element.getAttribute("data-col") as string);
-        console.log(row, col);
-        currModel.select(row, col);
+
+        console.log(element)
+
+        if (element.className.includes("frog")) {
+            const row = parseInt(element.getAttribute("data-row") as string);
+            const col = parseInt(element.getAttribute("data-col") as string);
+
+            console.log(row, col);
+
+            const x = e.clientX - (75/2);
+            const y = e.clientY - (60/2);
+
+            element.style.position = "absolute";
+            element.style.left = `${x}px`
+            element.style.top = `${y}px`
+
+            grabbedFrog = element;
+
+            currModel.select(row, col);
+            currModel.setSelected(true);
+        }
     }
 
-    function dropPiece(e: React.MouseEvent) {
-        const element = e.target as HTMLElement;
-        const row = parseInt(element.getAttribute("data-row") as string);
-        const col = parseInt(element.getAttribute("data-col") as string);
-        console.log(row, col);
-        currModel.select(row, col);
-        setCurrBoard(currModel.getBoard());
+    function moveFrog(e: React.MouseEvent) {
+        if (grabbedFrog) {
+            const x = e.clientX - (75/2);
+            const y = e.clientY - (60/2);
+
+            grabbedFrog.style.position = "absolute";
+            grabbedFrog.style.left = `${x}px`;
+            grabbedFrog.style.top = `${y}px`;  
+        }
+
     }
 
-    function handleMouseDown(e: React.MouseEvent) {
-        console.log(currBoard);
-        if (!currModel.getSelected()) {
-            selectPiece(e);
-        } else {
-            dropPiece(e);
+    function dropFrog(e: React.MouseEvent) {
+        try {
+            if (grabbedFrog) {
+                grabbedFrog = null;
+    
+                const x = e.clientX;
+                const y = e.clientY;
+    
+                const tile = document.elementsFromPoint(x, y);
+    
+                const row = parseInt(tile[1].getAttribute("data-row") as string);
+                const col = parseInt(tile[1].getAttribute("data-col") as string);
+    
+                console.log(row, col)
+                currModel.select(row, col);
+                currModel.setSelected(false);      
+            }
+            setCurrBoard(currModel.getBoard())
+            console.log(currModel.getBoard())   
+        } catch (error) {
+            setCurrBoard(currModel.getBoard());   
         }
     }
  
     return (
-        <div onMouseDown={e => handleMouseDown(e)} style={{gridTemplateColumns: `repeat(${currModel.getCurrConfig().getCol()}, 75px)`, gridTemplateRows: `repeat(${currModel.getCurrConfig().getRow()}, 75px)`}} id="board">
+        <div 
+            onMouseDown={e => grabFrog(e)} 
+            onMouseMove={e => moveFrog(e)}
+            onMouseUp={e => dropFrog(e)}
+            id="board">
             {currBoard.map((row, rowIndex) => (
                 <div className="row">
                     {row.map((element, colIndex) => (
